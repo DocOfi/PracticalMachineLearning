@@ -47,7 +47,7 @@ The features of the data may be classified into **measurement, summary, and hous
 The downloaded  training dataset contains ``160`` variables and ``19622`` rows while the testing dataset contains ``160`` variables and ``160`` rows.
 
 ###Setting the variables to their correct class
-We need to set the variables into the correct class to avoid errors.
+We need to set the variables into its correct class to avoid errors.
 
 ```r
 my_df2$total_accel_belt <- as.numeric(my_df2$total_accel_belt)

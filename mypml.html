@@ -168,7 +168,7 @@ my_df2 &lt;- my_df[, -c(1:7)]### removing housekeeping variables</code></pre>
 </div>
 <div id="setting-the-variables-to-their-correct-class" class="section level3">
 <h3>Setting the variables to their correct class</h3>
-<p>We need to set the variables into the correct class to avoid errors.</p>
+<p>We need to set the variables into its correct class to avoid errors.</p>
 <pre class="r"><code>my_df2$total_accel_belt &lt;- as.numeric(my_df2$total_accel_belt)
 my_df2$accel_belt_x &lt;- as.numeric(my_df2$ accel_belt_x)
 my_df2$accel_belt_y &lt;- as.numeric(my_df2$accel_belt_y)

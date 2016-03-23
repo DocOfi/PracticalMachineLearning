@@ -50,7 +50,7 @@ The features of the data may be classified into **measurement, summary, and hous
 The downloaded  training dataset contains ```r dim(training)[2]``` variables and ```r dim(training)[1]``` rows while the testing dataset contains ```r dim(testing)[2]``` variables and ```r dim(testing)[2]``` rows.
 
 ###Setting the variables to their correct class
-We need to set the variables into the correct class to avoid errors.
+We need to set the variables into its correct class to avoid errors.
 ```{r, rmNAs}
 my_df2$total_accel_belt <- as.numeric(my_df2$total_accel_belt)
 my_df2$accel_belt_x <- as.numeric(my_df2$ accel_belt_x)
