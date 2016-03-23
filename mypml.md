@@ -337,7 +337,7 @@ Class: B      0.8858648     0.9772488        0.9033124        0.9727406    0.193
 Class: C      0.8927875     0.9777778        0.8945312        0.9773756    0.1743119        0.1556235              0.1739721           0.9352827
 Class: D      0.9316062     0.9784597        0.8945274        0.9864782    0.1639484        0.1527353              0.1707441           0.9550329
 Class: E      0.9574861     0.9931307        0.9691300        0.9904505    0.1838260        0.1760109              0.1816174           0.9753084
-**Sensitivity suffered a bit but Specificity is still up there.**
+Sensitivity suffered a bit but Specificity is still up there.
 
 ###Conclusions
 
@@ -401,7 +401,7 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.12.3        randomForest_4.6-12 caret_6.0-64       
+## [1] randomForest_4.6-12 knitr_1.12.3        caret_6.0-64       
 ## [4] ggplot2_2.1.0       lattice_0.20-33    
 ## 
 ## loaded via a namespace (and not attached):
@@ -409,14 +409,14 @@ sessionInfo()
 ##  [4] minqa_1.2.4        splines_3.2.4      MatrixModels_0.4-1
 ##  [7] scales_0.3.0       grid_3.2.4         stringr_1.0.0     
 ## [10] e1071_1.6-7        lme4_1.1-11        munsell_0.4.3     
-## [13] highr_0.5.1        compiler_3.2.4     nnet_7.3-12       
-## [16] foreach_1.4.3      iterators_1.0.8    mgcv_1.8-12       
-## [19] Matrix_1.2-4       MASS_7.3-45        plyr_1.8.3        
-## [22] stats4_3.2.4       stringi_1.0-1      pbkrtest_0.4-6    
-## [25] magrittr_1.5       car_2.1-1          reshape2_1.4.1    
-## [28] rmarkdown_0.9.5    evaluate_0.8.3     gtable_0.2.0      
-## [31] colorspace_1.2-6   yaml_2.1.13        tools_3.2.4       
-## [34] parallel_3.2.4     nloptr_1.0.4       nlme_3.1-126      
-## [37] quantreg_5.21      class_7.3-14       formatR_1.3       
-## [40] Rcpp_0.12.3        SparseM_1.7
+## [13] highr_0.5.1        nnet_7.3-12        foreach_1.4.3     
+## [16] iterators_1.0.8    mgcv_1.8-12        Matrix_1.2-4      
+## [19] MASS_7.3-45        plyr_1.8.3         stats4_3.2.4      
+## [22] stringi_1.0-1      pbkrtest_0.4-6     magrittr_1.5      
+## [25] car_2.1-1          reshape2_1.4.1     rmarkdown_0.9.5   
+## [28] evaluate_0.8.3     gtable_0.2.0       colorspace_1.2-6  
+## [31] yaml_2.1.13        tools_3.2.4        parallel_3.2.4    
+## [34] nloptr_1.0.4       nlme_3.1-126       quantreg_5.21     
+## [37] class_7.3-14       formatR_1.3        Rcpp_0.12.3       
+## [40] SparseM_1.7
 ```

@@ -212,7 +212,7 @@ print(kable(Model_accuracy4$byClass))
 print(kable(Model_accuracy$byClass))
 print(kable(Model_accuracy4$byClass))
 ```
-**Sensitivity suffered a bit but Specificity is still up there.**
+Sensitivity suffered a bit but Specificity is still up there.
 
 ###Conclusions
 
