@@ -25,7 +25,7 @@ dateDownloaded
 ```
 
 ```
-## [1] "Thu Mar 24 00:14:43 2016"
+## [1] "Fri Mar 25 13:04:48 2016"
 ```
 
 ### Reading and Processing the data 
@@ -109,7 +109,7 @@ rfor_fitall = train(classe ~ ., data=train_set, method="rf", trControl=ctrl)
 ```
 
 ###Assessing Model Accuracy
-We examine the model for its accuracy and we finid it to be very accurate.
+We examine the model for its accuracy and we find it to be very accurate.
 
 ```r
 library(knitr)
@@ -148,7 +148,7 @@ C        0      0   2054      0      0
 D        0      0      0   1930      0
 E        0      0      0      0   2165
 
-The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries.
+The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries for an overall misclassification rate of **0.68%**.
 
 
 ```r
@@ -185,7 +185,7 @@ The plot below shows the relationship between the number of randomly selected pr
 plot(rfor_fitall)
 ```
 
-![](mypml_files/figure-html/Accplot-1.png)
+![](index_files/figure-html/Accplot-1.png)
 
 ###Reducing the Number of Features
 We now check which features are important for our model to reduce the number of features in our model to improve the processing time of our model and improve scalability and interpretability.
@@ -194,7 +194,7 @@ We now check which features are important for our model to reduce the number of 
 varImpPlot(rfor_fitall$finalModel, n.var = 27)
 ```
 
-![](mypml_files/figure-html/ImpFeatplot-1.png)
+![](index_files/figure-html/ImpFeatplot-1.png)
 
 We compare the more important features to those which are highly correlated and decide which features to keep.
 
@@ -204,29 +204,33 @@ We compare the more important features to those which are highly correlated and 
 cor_mat <- cor(train_set[,-53])
 Cor_Sum <- summary(cor_mat[upper.tri(cor_mat)])
 highcor <- findCorrelation(cor_mat, cutoff = .75)
-highcor_Vars <-  as.data.frame(names(train_set)[highcor])
-highcor_Vars
+highcor_Vars <-as.data.frame(names(train_set)[highcor])
+names(highcor_Vars) <- "Hi_Corr_Vars"
+print(kable(highcor_Vars))
 ```
 
-   names(train_set)[highcor]
-1               accel_belt_z
-2                  roll_belt
-3               accel_belt_y
-4                accel_arm_y
-5           total_accel_belt
-6           accel_dumbbell_z
-7               accel_belt_x
-8                 pitch_belt
-9          magnet_dumbbell_x
-10          accel_dumbbell_y
-11         magnet_dumbbell_y
-12          accel_dumbbell_x
-13               accel_arm_x
-14               accel_arm_z
-15              magnet_arm_y
-16             magnet_belt_z
-17           accel_forearm_y
-18               gyros_arm_x
+
+
+Hi_Corr_Vars      
+------------------
+accel_belt_z      
+roll_belt         
+accel_belt_y      
+accel_arm_y       
+total_accel_belt  
+accel_dumbbell_z  
+accel_belt_x      
+pitch_belt        
+magnet_dumbbell_x 
+accel_dumbbell_y  
+magnet_dumbbell_y 
+accel_dumbbell_x  
+accel_arm_x       
+accel_arm_z       
+magnet_arm_y      
+magnet_belt_z     
+accel_forearm_y   
+gyros_arm_x       
 
 **Can  we do just as well with 20 features?**
 
@@ -240,6 +244,12 @@ rfor_fit20 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + pitch
 ```r
 pred_Vset20 <- predict(rfor_fit20, newdata = test_set1)
 Model_accuracy20 <- confusionMatrix(pred_Vset20, test_set1$classe)
+```
+
+**Model with all the variables as predictors**
+
+
+```r
 print(kable(Model_accuracy$byClass))
 ```
 
@@ -250,6 +260,9 @@ Class: B      0.9920983     0.9983147        0.9929701        0.9981045    0.193
 Class: C      0.9912281     0.9967078        0.9845111        0.9981455    0.1743119        0.1727829              0.1755012           0.9939679
 Class: D      0.9896373     0.9989839        0.9947917        0.9979700    0.1639484        0.1622494              0.1630989           0.9943106
 Class: E      0.9944547     0.9997918        0.9990715        0.9987523    0.1838260        0.1828067              0.1829766           0.9971233
+
+**Model with 20 variables**
+
 
 ```r
 print(kable(Model_accuracy20$byClass))
@@ -272,7 +285,6 @@ ctrl <- trainControl(method="repeatedcv", number=5, repeats=2)
 rfor_fit8 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + pitch_belt + magnet_dumbbell_y + gyros_belt_z + magnet_belt_x + yaw_arm, data=train_set, method="rf", trControl=ctrl)
 ```
 
-**The results were still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 27**.
 
 ```r
 pred_testset8 <- predict(rfor_fit8, newdata = test_set1)
@@ -287,6 +299,8 @@ Class: B      0.9640035     0.9957868        0.9821109        0.9914010    0.193
 Class: C      0.9853801     0.9921811        0.9637750        0.9968989    0.1743119        0.1717635              0.1782195           0.9887806
 Class: D      0.9865285     0.9979679        0.9896050        0.9973599    0.1639484        0.1617397              0.1634387           0.9922482
 Class: E      0.9907579     0.9987510        0.9944341        0.9979201    0.1838260        0.1821271              0.1831464           0.9947544
+
+**The results were still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 20**.
 
 **Let's try a model with 4 features**.
 
@@ -309,39 +323,92 @@ Class: C      0.8927875     0.9777778        0.8945312        0.9773756    0.174
 Class: D      0.9316062     0.9784597        0.8945274        0.9864782    0.1639484        0.1527353              0.1707441           0.9550329
 Class: E      0.9574861     0.9931307        0.9691300        0.9904505    0.1838260        0.1760109              0.1816174           0.9753084
 
-**Specificity and sensitivity dipped a bit but a model with 4 features has better interpretability, scalability and faster processing**.
+**Sensitivity  dipped considerably but specificity is still up there. A model with 4 features has better interpretability, scalability and faster processing**.
 
 ###Predicting on the second Test Set
 **we now compare the model with all the variables and the one with 4 only on the second test set.**
 
 ```r
-print(kable(Model_accuracy$byClass))
+pred_testsetall_2 <- predict(rfor_fitall, newdata = test_set2)
+Model_accuracyall_2 <- confusionMatrix(pred_testsetall_2, test_set2$classe)
+pred_testset4_2 <- predict(rfor_fit4, newdata = test_set2)
+Model_accuracy4_2 <- confusionMatrix(pred_testset4_2, test_set2$classe)
 ```
 
-            Sensitivity   Specificity   Pos Pred Value   Neg Pred Value   Prevalence   Detection Rate   Detection Prevalence   Balanced Accuracy
----------  ------------  ------------  ---------------  ---------------  -----------  ---------------  ---------------------  ------------------
-Class: A      0.9994026     0.9988129        0.9970203        0.9997624    0.2844037        0.2842338              0.2850832           0.9991078
-Class: B      0.9920983     0.9983147        0.9929701        0.9981045    0.1935100        0.1919810              0.1933401           0.9952065
-Class: C      0.9912281     0.9967078        0.9845111        0.9981455    0.1743119        0.1727829              0.1755012           0.9939679
-Class: D      0.9896373     0.9989839        0.9947917        0.9979700    0.1639484        0.1622494              0.1630989           0.9943106
-Class: E      0.9944547     0.9997918        0.9990715        0.9987523    0.1838260        0.1828067              0.1829766           0.9971233
+**Model with all variables as predictors**
+
 
 ```r
-print(kable(Model_accuracy4$byClass))
+print(kable(Model_accuracyall_2$byClass))
 ```
 
             Sensitivity   Specificity   Pos Pred Value   Neg Pred Value   Prevalence   Detection Rate   Detection Prevalence   Balanced Accuracy
 ---------  ------------  ------------  ---------------  ---------------  -----------  ---------------  ---------------------  ------------------
-Class: A      0.9689367     0.9883666        0.9706762        0.9876631    0.2844037        0.2755691              0.2838940           0.9786516
-Class: B      0.8858648     0.9772488        0.9033124        0.9727406    0.1935100        0.1714237              0.1897723           0.9315568
-Class: C      0.8927875     0.9777778        0.8945312        0.9773756    0.1743119        0.1556235              0.1739721           0.9352827
-Class: D      0.9316062     0.9784597        0.8945274        0.9864782    0.1639484        0.1527353              0.1707441           0.9550329
-Class: E      0.9574861     0.9931307        0.9691300        0.9904505    0.1838260        0.1760109              0.1816174           0.9753084
-Sensitivity suffered a bit but Specificity is still up there.
+Class: A      0.9964158     0.9985735        0.9964158        0.9985735    0.2846939        0.2836735              0.2846939           0.9974946
+Class: B      0.9947230     0.9981025        0.9921053        0.9987342    0.1933673        0.1923469              0.1938776           0.9964127
+Class: C      0.9853801     0.9950556        0.9768116        0.9969040    0.1744898        0.1719388              0.1760204           0.9902179
+Class: D      0.9781931     0.9981696        0.9905363        0.9957395    0.1637755        0.1602041              0.1617347           0.9881814
+Class: E      0.9972222     0.9993750        0.9972222        0.9993750    0.1836735        0.1831633              0.1836735           0.9982986
+
+**Model with 4 predictors**
+
+
+```r
+print(kable(Model_accuracy4_2$byClass))
+```
+
+            Sensitivity   Specificity   Pos Pred Value   Neg Pred Value   Prevalence   Detection Rate   Detection Prevalence   Balanced Accuracy
+---------  ------------  ------------  ---------------  ---------------  -----------  ---------------  ---------------------  ------------------
+Class: A      0.9784946     0.9843081        0.9612676        0.9913793    0.2846939        0.2785714              0.2897959           0.9814014
+Class: B      0.8786280     0.9784946        0.9073569        0.9711237    0.1933673        0.1698980              0.1872449           0.9285613
+Class: C      0.8801170     0.9796044        0.9011976        0.9747847    0.1744898        0.1535714              0.1704082           0.9298607
+Class: D      0.9314642     0.9823063        0.9115854        0.9865196    0.1637755        0.1525510              0.1673469           0.9568852
+Class: E      0.9583333     0.9887500        0.9504132        0.9906074    0.1836735        0.1760204              0.1852041           0.9735417
+
+**Sensitivity suffered a bit but Specificity is still up there. Removing some of the predictors increased bias, which reduced our capacity to predict accurately.**
 
 ###Conclusions
+Predictive models on the HAR weight lifting exercises dataset   classified errors and correct execution of lifting barbells with high accuracy, sensitivity and specificity. It has to be pointed out however, that the errors in movement were performed purposefully.  Different results may be obtained when the errors are committed without intent to commit the error. 
 
-Predictive models on the HAR weight lifting exercises dataset   classified errors and correct execution of lifting barbells with high accuracy, sensitivity and specificity. It has to be pointed out however, that the errors in movement were performed purposefully.  Different results may be obtained when the errors are committed without intent to commit the error.  
+###Misclassified points by the model with all variables on the 2nd test set
+
+```r
+correctall <- pred_testsetall_2 == test_set2$classe
+qplot(pitch_forearm,magnet_dumbbell_z,colour=correctall,data=test_set2)
+```
+
+![](index_files/figure-html/correctplotall-1.png)
+
+###Misclassified points by the model with 20 variables on the 2nd test set
+
+```r
+pred_testset20_2 <- predict(rfor_fit20, newdata = test_set2)
+Model_accuracy20_2 <- confusionMatrix(pred_testset20_2, test_set2$classe)
+correct20 <- pred_testset20_2 == test_set2$classe
+qplot(pitch_forearm,magnet_dumbbell_z,colour=correct20,data=test_set2)
+```
+
+![](index_files/figure-html/correctplot20-1.png)
+
+###Misclassified points by the model with 8 variables on the 2nd test set
+
+```r
+pred_testset8_2 <- predict(rfor_fit8, newdata = test_set2)
+Model_accuracy8_2 <- confusionMatrix(pred_testset8_2, test_set2$classe)
+correct8 <- pred_testset8_2 == test_set2$classe
+qplot(pitch_forearm,magnet_dumbbell_z,colour=correct8,data=test_set2)
+```
+
+![](index_files/figure-html/correctplot8-1.png)
+
+###Misclassified points by the model with 4 variables on the 2nd test set
+
+```r
+correct4 <- pred_testset4_2 == test_set2$classe
+qplot(pitch_forearm,magnet_dumbbell_z,colour=correct4,data=test_set2)
+```
+
+![](index_files/figure-html/correctplot4-1.png)
 
 ###Predicting on the Test Set
 We now use our different models to predict on the downloaded test set.  The results are the same for all models. 
@@ -409,14 +476,14 @@ sessionInfo()
 ##  [4] minqa_1.2.4        splines_3.2.4      MatrixModels_0.4-1
 ##  [7] scales_0.3.0       grid_3.2.4         stringr_1.0.0     
 ## [10] e1071_1.6-7        lme4_1.1-11        munsell_0.4.3     
-## [13] highr_0.5.1        nnet_7.3-12        foreach_1.4.3     
-## [16] iterators_1.0.8    mgcv_1.8-12        Matrix_1.2-4      
-## [19] MASS_7.3-45        plyr_1.8.3         stats4_3.2.4      
-## [22] stringi_1.0-1      pbkrtest_0.4-6     magrittr_1.5      
-## [25] car_2.1-1          reshape2_1.4.1     rmarkdown_0.9.5   
-## [28] evaluate_0.8.3     gtable_0.2.0       colorspace_1.2-6  
-## [31] yaml_2.1.13        tools_3.2.4        parallel_3.2.4    
-## [34] nloptr_1.0.4       nlme_3.1-126       quantreg_5.21     
-## [37] class_7.3-14       formatR_1.3        Rcpp_0.12.3       
-## [40] SparseM_1.7
+## [13] highr_0.5.1        nnet_7.3-12        labeling_0.3      
+## [16] foreach_1.4.3      iterators_1.0.8    mgcv_1.8-12       
+## [19] Matrix_1.2-4       MASS_7.3-45        plyr_1.8.3        
+## [22] stats4_3.2.4       stringi_1.0-1      pbkrtest_0.4-6    
+## [25] magrittr_1.5       car_2.1-1          reshape2_1.4.1    
+## [28] rmarkdown_0.9.5    evaluate_0.8.3     gtable_0.2.0      
+## [31] colorspace_1.2-6   yaml_2.1.13        tools_3.2.4       
+## [34] parallel_3.2.4     nloptr_1.0.4       nlme_3.1-126      
+## [37] quantreg_5.21      class_7.3-14       formatR_1.3       
+## [40] Rcpp_0.12.3        SparseM_1.7
 ```
