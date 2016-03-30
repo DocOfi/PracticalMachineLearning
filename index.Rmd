@@ -1,4 +1,4 @@
----
+n/ ---
 title: "Predicting Errors in Execution of Physical Exercises"
 author: "DocOfi"
 date: "October 16, 2015"
@@ -129,7 +129,7 @@ The table below shows which predictions on the training dataset and the validati
 print(kable(In_SampleErr))
 ```
 
-The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries for an overall misclassification rate of **0.68%**.
+The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries.
 
 ```{r, AccErr2, results='asis'}
 print(kable(out_of_SampleErr))
@@ -143,7 +143,7 @@ print(kable(Model_accuracy$byClass))
 
 The plot below shows the relationship between the number of randomly selected predictors and the accuracy. Accuracy is highest when mtry, the number of variables available for splitting at each tree node is 27. mtry is the tuning parameter for the package rf in caret.
 
-```{r, Accplot, fig.width=6, fig.height=4}
+```{r, Accplot, fig.width=6, fig.height=3}
 plot(rfor_fitall)
 ```
 
@@ -160,8 +160,7 @@ We compare the more important features to those which are highly correlated and 
 cor_mat <- cor(train_set[,-53])
 Cor_Sum <- summary(cor_mat[upper.tri(cor_mat)])
 highcor <- findCorrelation(cor_mat, cutoff = .75)
-highcor_Vars <-as.data.frame(names(train_set)[highcor])
-names(highcor_Vars) <- "Hi_Corr_Vars"
+highcor_Vars <-  as.data.frame(names(train_set)[highcor])
 print(kable(highcor_Vars))
 ```
 
@@ -175,17 +174,7 @@ rfor_fit20 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + pitch
 ```{r, model27, results='asis', warning=FALSE, message=FALSE}
 pred_Vset20 <- predict(rfor_fit20, newdata = test_set1)
 Model_accuracy20 <- confusionMatrix(pred_Vset20, test_set1$classe)
-```
-
-**Model with all the variables as predictors**
-
-```{r, CompModelall, results='asis', warning=FALSE, message=FALSE}
 print(kable(Model_accuracy$byClass))
-```
-
-**Model with 20 variables**
-
-```{r, CompModel20, results='asis', warning=FALSE, message=FALSE}
 print(kable(Model_accuracy20$byClass))
 ```
 
@@ -216,7 +205,7 @@ Model_accuracy4 <- confusionMatrix(pred_testset4, test_set1$classe)
 print(kable(Model_accuracy4$byClass))
 ```
 
-**Sensitivity  dipped considerably but specificity is still up there. A model with 4 features has better interpretability, scalability and faster processing**.
+**Specificity and sensitivity dipped a bit but a model with 4 features has better interpretability, scalability and faster processing**.
 
 ###Predicting on the second Test Set
 **we now compare the model with all the variables and the one with 4 only on the second test set.**
@@ -225,33 +214,23 @@ pred_testsetall_2 <- predict(rfor_fitall, newdata = test_set2)
 Model_accuracyall_2 <- confusionMatrix(pred_testsetall_2, test_set2$classe)
 pred_testset4_2 <- predict(rfor_fit4, newdata = test_set2)
 Model_accuracy4_2 <- confusionMatrix(pred_testset4_2, test_set2$classe)
-```
-
-**Model with all variables as predictors**
-
-```{r, CompSecT, results='asis', warning=FALSE, message=FALSE}
 print(kable(Model_accuracyall_2$byClass))
-```
-
-**Model with 4 predictors**
-
-```{r, CompSecT2, results='asis', warning=FALSE, message=FALSE}
 print(kable(Model_accuracy4_2$byClass))
 ```
-
-**Sensitivity suffered a bit but Specificity is still up there. Removing some of the predictors increased bias, which reduced our capacity to predict accurately.**
+Sensitivity suffered a bit but Specificity is still up there.
 
 ###Conclusions
-Predictive models on the HAR weight lifting exercises dataset   classified errors and correct execution of lifting barbells with high accuracy, sensitivity and specificity. It has to be pointed out however, that the errors in movement were performed purposefully.  Different results may be obtained when the errors are committed without intent to commit the error. 
+
+Predictive models on the HAR weight lifting exercises dataset   classified errors and correct execution of lifting barbells with high accuracy, sensitivity and specificity. It has to be pointed out however, that the errors in movement were performed purposefully.  Different results may be obtained when the errors are committed without intent to commit the error.  
 
 ###Misclassified points by the model with all variables on the 2nd test set
-```{r, correctplotall, fig.width=6, fig.height=4}
+```{r, correctplotall, fig.width=6, fig.height=3}
 correctall <- pred_testsetall_2 == test_set2$classe
 qplot(pitch_forearm,magnet_dumbbell_z,colour=correctall,data=test_set2)
 ```
 
 ###Misclassified points by the model with 20 variables on the 2nd test set
-```{r, correctplot20, fig.width=6, fig.height=4}
+```{r, correctplot20, fig.width=6, fig.height=3}
 pred_testset20_2 <- predict(rfor_fit20, newdata = test_set2)
 Model_accuracy20_2 <- confusionMatrix(pred_testset20_2, test_set2$classe)
 correct20 <- pred_testset20_2 == test_set2$classe
@@ -259,7 +238,7 @@ qplot(pitch_forearm,magnet_dumbbell_z,colour=correct20,data=test_set2)
 ```
 
 ###Misclassified points by the model with 8 variables on the 2nd test set
-```{r, correctplot8, fig.width=6, fig.height=4}
+```{r, correctplot8, fig.width=6, fig.height=3}
 pred_testset8_2 <- predict(rfor_fit8, newdata = test_set2)
 Model_accuracy8_2 <- confusionMatrix(pred_testset8_2, test_set2$classe)
 correct8 <- pred_testset8_2 == test_set2$classe
@@ -267,7 +246,7 @@ qplot(pitch_forearm,magnet_dumbbell_z,colour=correct8,data=test_set2)
 ```
 
 ###Misclassified points by the model with 4 variables on the 2nd test set
-```{r, correctplot4, fig.width=6, fig.height=4}
+```{r, correctplot4, fig.width=6, fig.height=3}
 correct4 <- pred_testset4_2 == test_set2$classe
 qplot(pitch_forearm,magnet_dumbbell_z,colour=correct4,data=test_set2)
 ```
