@@ -86,7 +86,7 @@ all_zero_vars <- which(all_zero_index == 0)
 
 ### Creating a Train set and a Validation set
 
-We partition the data into a train set and two test sets with 60, 20, and 20 percent composition. A testing set was downloaded earlier as a final validation of the model's accuracy.
+We partition the data into a train set and two test sets with 60, 30, and 10 percent composition. A testing set was downloaded earlier as a final validation of the model's accuracy.
 ```{r, partition}
 library(caret)
 set.seed(107)
@@ -116,26 +116,25 @@ print(kable(rfor_fitall$results))
 ```
 
 ```{r, allmodel, results='hide', warning=FALSE, message=FALSE}
-pred_Trainingset <- predict(rfor_fitall, newdata = train_set)
 pred_Vset <- predict(rfor_fitall, newdata = test_set1)
-In_SampleErr <- table(pred_Trainingset,train_set$classe)
 out_of_SampleErr <- table(pred_Vset, test_set1$classe)
 Model_accuracy <- confusionMatrix(pred_Vset, test_set1$classe)
 ```
 
-The table below shows which predictions on the training dataset and the validation dataset were correct and which were not. The non-diagonal elements are the errors. We can see that our model was able to predict on the training dataset perfectly, which maybe a cause for worry with regard to overfitting.  
+The table below shows which predictions on the training dataset were correct and which were not. The non-diagonal elements are the errors. it misclassified only 91 out of a possible 11,776 entries for an overall misclassification rate of 0.77%.  The misclassification rate for individual classes can be seen at the last column.  The overall accuracy is 99.23%.
 
 ```{r, AccErr1, results='asis'}
-print(kable(In_SampleErr))
+in_SamplErr <- rfor_fitall$finalModel$confusion
+print(kable(in_SamplErr))
 ```
 
-The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries.
+The prediction on the the first test dataset was 99.41% accurate. it misclassified only 35 out of a possible 5,886 entries for an overall misclassification rate of 0.59%.
 
 ```{r, AccErr2, results='asis'}
 print(kable(out_of_SampleErr))
 ```
 
-The confusion matrix summarize the accuracy, sensitivity, specificity, and other parameters of our model.
+The confusion matrix summarize the accuracy, sensitivity, specificity, and other parameters of our model's prediction by class on the first test set.
 
 ```{r, AccErr3, results='asis'}
 print(kable(Model_accuracy$byClass))
@@ -174,7 +173,6 @@ rfor_fit20 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + pitch
 ```{r, model27, results='asis', warning=FALSE, message=FALSE}
 pred_Vset20 <- predict(rfor_fit20, newdata = test_set1)
 Model_accuracy20 <- confusionMatrix(pred_Vset20, test_set1$classe)
-print(kable(Model_accuracy$byClass))
 print(kable(Model_accuracy20$byClass))
 ```
 
@@ -192,7 +190,7 @@ Model_accuracy8 <- confusionMatrix(pred_testset8, test_set1$classe)
 print(kable(Model_accuracy8$byClass))
 ```
 
-**The results were still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 20**.
+**The results are still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 27**.
 
 **Let's try a model with 4 features**.
 ```{r, TWOfeaturemodel, cache=TRUE, results='hide', warning=FALSE, message=FALSE}
@@ -217,7 +215,19 @@ Model_accuracy4_2 <- confusionMatrix(pred_testset4_2, test_set2$classe)
 print(kable(Model_accuracyall_2$byClass))
 print(kable(Model_accuracy4_2$byClass))
 ```
-Sensitivity suffered a bit but Specificity is still up there.
+
+**Sensitivity suffered a bit, particularly in predicting class B and C errors, but Specificity is still up there. Reducing the number of predictors from 52 to 4 increased bias, which reduced our capacity to predict accurately.**
+
+```{r, testerrrate, results='asis'}
+Model_perf <- data.frame(Model_52Pred= c(getTrainPerf(rfor_fitall)[,1], Model_accuracy$overall[1], Model_accuracyall_2$overall[1]), Model_4Pred= c(getTrainPerf(rfor_fit4)[,1], Model_accuracy4$overall[1], Model_accuracy4_2$overall[1]))
+rownames(Model_perf) <- c("training_dtset", "testing_set1", "testing_set2")
+Model_perf$Model_52Pred <- round(Model_perf$Model_52Pred*100, 2) 
+Model_perf$Model_4Pred <- round(Model_perf$Model_4Pred*100, 2)
+names(Model_perf) <- c("Model_52Accuracy(%)", "Model_4Accuracy(%)")
+print(kable(Model_perf))
+```
+
+**Based on our model's performance on the second test set, the estimated prediction error for our model with 52 predictors is ``r 100 - Model_perf[3,1]``%. For the model with 4 predictors, ``r 100 - Model_perf[3,2]``%.**
 
 ###Conclusions
 

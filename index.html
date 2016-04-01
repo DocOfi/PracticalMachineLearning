@@ -181,7 +181,7 @@ all_zero_vars &lt;- which(all_zero_index == 0)</code></pre>
 </div>
 <div id="creating-a-train-set-and-a-validation-set" class="section level3">
 <h3>Creating a Train set and a Validation set</h3>
-<p>We partition the data into a train set and two test sets with 60, 20, and 20 percent composition. A testing set was downloaded earlier as a final validation of the model’s accuracy.</p>
+<p>We partition the data into a train set and two test sets with 60, 30, and 10 percent composition. A testing set was downloaded earlier as a final validation of the model’s accuracy.</p>
 <pre class="r"><code>library(caret)
 set.seed(107)
 intrain &lt;- createDataPartition(y = my_df2$classe, p = 0.6, list = FALSE)
@@ -237,13 +237,12 @@ print(kable(rfor_fitall$results))</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>pred_Trainingset &lt;- predict(rfor_fitall, newdata = train_set)
-pred_Vset &lt;- predict(rfor_fitall, newdata = test_set1)
-In_SampleErr &lt;- table(pred_Trainingset,train_set$classe)
+<pre class="r"><code>pred_Vset &lt;- predict(rfor_fitall, newdata = test_set1)
 out_of_SampleErr &lt;- table(pred_Vset, test_set1$classe)
 Model_accuracy &lt;- confusionMatrix(pred_Vset, test_set1$classe)</code></pre>
-<p>The table below shows which predictions on the training dataset and the validation dataset were correct and which were not. The non-diagonal elements are the errors. We can see that our model was able to predict on the training dataset perfectly, which maybe a cause for worry with regard to overfitting.</p>
-<pre class="r"><code>print(kable(In_SampleErr))</code></pre>
+<p>The table below shows which predictions on the training dataset were correct and which were not. The non-diagonal elements are the errors. it misclassified only 91 out of a possible 11,776 entries for an overall misclassification rate of 0.77%. The misclassification rate for individual classes can be seen at the last column. The overall accuracy is 99.23%.</p>
+<pre class="r"><code>in_SamplErr &lt;- rfor_fitall$finalModel$confusion
+print(kable(in_SamplErr))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -253,52 +252,58 @@ Model_accuracy &lt;- confusionMatrix(pred_Vset, test_set1$classe)</code></pre>
 <th align="right">C</th>
 <th align="right">D</th>
 <th align="right">E</th>
+<th align="right">class.error</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">A</td>
-<td align="right">3348</td>
+<td align="right">3344</td>
+<td align="right">2</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.0011947</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
+<td align="right">16</td>
+<td align="right">2255</td>
+<td align="right">8</td>
 <td align="right">0</td>
-<td align="right">2279</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.0105309</td>
 </tr>
 <tr class="odd">
 <td align="left">C</td>
 <td align="right">0</td>
+<td align="right">16</td>
+<td align="right">2031</td>
+<td align="right">7</td>
 <td align="right">0</td>
-<td align="right">2054</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.0111977</td>
 </tr>
 <tr class="even">
 <td align="left">D</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1930</td>
-<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">24</td>
+<td align="right">1903</td>
+<td align="right">2</td>
+<td align="right">0.0139896</td>
 </tr>
 <tr class="odd">
 <td align="left">E</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">2165</td>
+<td align="right">3</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">2152</td>
+<td align="right">0.0060046</td>
 </tr>
 </tbody>
 </table>
-<p>The prediction on the the first test dataset was 99% accurate. it misclassified only 40 out of a possible 5,886 entries.</p>
+<p>The prediction on the the first test dataset was 99.41% accurate. it misclassified only 35 out of a possible 5,886 entries for an overall misclassification rate of 0.59%.</p>
 <pre class="r"><code>print(kable(out_of_SampleErr))</code></pre>
 <table>
 <thead>
@@ -354,7 +359,7 @@ Model_accuracy &lt;- confusionMatrix(pred_Vset, test_set1$classe)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>The confusion matrix summarize the accuracy, sensitivity, specificity, and other parameters of our model.</p>
+<p>The confusion matrix summarize the accuracy, sensitivity, specificity, and other parameters of our model’s prediction by class on the first test set.</p>
 <pre class="r"><code>print(kable(Model_accuracy$byClass))</code></pre>
 <table>
 <thead>
@@ -455,80 +460,7 @@ print(kable(highcor_Vars))</code></pre>
 rfor_fit20 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + pitch_belt + magnet_belt_y + gyros_belt_z + magnet_belt_x + gyros_arm_y + gyros_dumbbell_y + yaw_arm + accel_belt_z + accel_dumbbell_z + accel_dumbbell_y + gyros_forearm_y + accel_forearm_x + gyros_belt_x + magnet_arm_z + gyros_dumbbell_z + magnet_belt_z + magnet_dumbbell_y, data=train_set, method=&quot;rf&quot;, trControl=ctrl)</code></pre>
 <pre class="r"><code>pred_Vset20 &lt;- predict(rfor_fit20, newdata = test_set1)
 Model_accuracy20 &lt;- confusionMatrix(pred_Vset20, test_set1$classe)
-print(kable(Model_accuracy$byClass))</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">Sensitivity</th>
-<th align="right">Specificity</th>
-<th align="right">Pos Pred Value</th>
-<th align="right">Neg Pred Value</th>
-<th align="right">Prevalence</th>
-<th align="right">Detection Rate</th>
-<th align="right">Detection Prevalence</th>
-<th align="right">Balanced Accuracy</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Class: A</td>
-<td align="right">0.9994026</td>
-<td align="right">0.9988129</td>
-<td align="right">0.9970203</td>
-<td align="right">0.9997624</td>
-<td align="right">0.2844037</td>
-<td align="right">0.2842338</td>
-<td align="right">0.2850832</td>
-<td align="right">0.9991078</td>
-</tr>
-<tr class="even">
-<td align="left">Class: B</td>
-<td align="right">0.9920983</td>
-<td align="right">0.9983147</td>
-<td align="right">0.9929701</td>
-<td align="right">0.9981045</td>
-<td align="right">0.1935100</td>
-<td align="right">0.1919810</td>
-<td align="right">0.1933401</td>
-<td align="right">0.9952065</td>
-</tr>
-<tr class="odd">
-<td align="left">Class: C</td>
-<td align="right">0.9912281</td>
-<td align="right">0.9967078</td>
-<td align="right">0.9845111</td>
-<td align="right">0.9981455</td>
-<td align="right">0.1743119</td>
-<td align="right">0.1727829</td>
-<td align="right">0.1755012</td>
-<td align="right">0.9939679</td>
-</tr>
-<tr class="even">
-<td align="left">Class: D</td>
-<td align="right">0.9896373</td>
-<td align="right">0.9989839</td>
-<td align="right">0.9947917</td>
-<td align="right">0.9979700</td>
-<td align="right">0.1639484</td>
-<td align="right">0.1622494</td>
-<td align="right">0.1630989</td>
-<td align="right">0.9943106</td>
-</tr>
-<tr class="odd">
-<td align="left">Class: E</td>
-<td align="right">0.9944547</td>
-<td align="right">0.9997918</td>
-<td align="right">0.9990715</td>
-<td align="right">0.9987523</td>
-<td align="right">0.1838260</td>
-<td align="right">0.1828067</td>
-<td align="right">0.1829766</td>
-<td align="right">0.9971233</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>print(kable(Model_accuracy20$byClass))</code></pre>
+print(kable(Model_accuracy20$byClass))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -680,7 +612,7 @@ print(kable(Model_accuracy8$byClass))</code></pre>
 </tr>
 </tbody>
 </table>
-<p><strong>The results were still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 20</strong>.</p>
+<p><strong>The results are still impressive. If you recall the plot above, 2 randomly selected predictors was able to achieve a slightly lower accuracy compared to one with 27</strong>.</p>
 <p><strong>Let’s try a model with 4 features</strong>.</p>
 <pre class="r"><code>rfor_fit4 = train(classe ~ yaw_belt + pitch_forearm + magnet_dumbbell_z + yaw_arm, data=train_set, method=&quot;rf&quot;, trControl=ctrl)</code></pre>
 <pre class="r"><code>pred_testset4 &lt;- predict(rfor_fit4, newdata = test_set1)
@@ -910,19 +842,42 @@ print(kable(Model_accuracyall_2$byClass))</code></pre>
 <td align="right">0.1852041</td>
 <td align="right">0.9735417</td>
 </tr>
+</tbody>
+</table>
+<p><strong>Sensitivity suffered a bit, particularly in predicting class B and C errors, but Specificity is still up there. Reducing the number of predictors from 52 to 4 increased bias, which reduced our capacity to predict accurately.</strong></p>
+<pre class="r"><code>Model_perf &lt;- data.frame(Model_52Pred= c(getTrainPerf(rfor_fitall)[,1], Model_accuracy$overall[1], Model_accuracyall_2$overall[1]), Model_4Pred= c(getTrainPerf(rfor_fit4)[,1], Model_accuracy4$overall[1], Model_accuracy4_2$overall[1]))
+rownames(Model_perf) &lt;- c(&quot;training_dtset&quot;, &quot;testing_set1&quot;, &quot;testing_set2&quot;)
+Model_perf$Model_52Pred &lt;- round(Model_perf$Model_52Pred*100, 2) 
+Model_perf$Model_4Pred &lt;- round(Model_perf$Model_4Pred*100, 2)
+names(Model_perf) &lt;- c(&quot;Model_52Accuracy(%)&quot;, &quot;Model_4Accuracy(%)&quot;)
+print(kable(Model_perf))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Model_52Accuracy(%)</th>
+<th align="right">Model_4Accuracy(%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">training_dtset</td>
+<td align="right">98.92</td>
+<td align="right">92.27</td>
+</tr>
 <tr class="even">
-<td align="left">Sensitivity</td>
-<td align="right">suffered a bi</td>
-<td align="right">t but Specific</td>
-<td align="right">ity is still up t</td>
-<td align="right">here.</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
+<td align="left">testing_set1</td>
+<td align="right">99.41</td>
+<td align="right">93.14</td>
+</tr>
+<tr class="odd">
+<td align="left">testing_set2</td>
+<td align="right">99.13</td>
+<td align="right">93.06</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Based on our model’s performance on the second test set, the estimated prediction error for our model with 52 predictors is <code>0.87</code>%. For the model with 4 predictors, <code>6.94</code>%.</strong></p>
 </div>
 <div id="conclusions" class="section level3">
 <h3>Conclusions</h3>
@@ -988,7 +943,7 @@ print(pred_Testset8)</code></pre>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.12.3        randomForest_4.6-12 caret_6.0-64       
+## [1] randomForest_4.6-12 knitr_1.12.3        caret_6.0-64       
 ## [4] ggplot2_2.1.0       lattice_0.20-33    
 ## 
 ## loaded via a namespace (and not attached):
@@ -996,16 +951,16 @@ print(pred_Testset8)</code></pre>
 ##  [4] minqa_1.2.4        splines_3.2.4      MatrixModels_0.4-1
 ##  [7] scales_0.3.0       grid_3.2.4         stringr_1.0.0     
 ## [10] e1071_1.6-7        lme4_1.1-11        munsell_0.4.3     
-## [13] highr_0.5.1        compiler_3.2.4     nnet_7.3-12       
-## [16] labeling_0.3       foreach_1.4.3      iterators_1.0.8   
-## [19] mgcv_1.8-12        Matrix_1.2-4       MASS_7.3-45       
-## [22] plyr_1.8.3         stats4_3.2.4       stringi_1.0-1     
-## [25] pbkrtest_0.4-6     magrittr_1.5       car_2.1-1         
-## [28] reshape2_1.4.1     rmarkdown_0.9.5    evaluate_0.8.3    
-## [31] gtable_0.2.0       colorspace_1.2-6   tools_3.2.4       
-## [34] parallel_3.2.4     nloptr_1.0.4       nlme_3.1-126      
-## [37] quantreg_5.21      formatR_1.3        class_7.3-14      
-## [40] Rcpp_0.12.3        SparseM_1.7</code></pre>
+## [13] highr_0.5.1        nnet_7.3-12        labeling_0.3      
+## [16] foreach_1.4.3      iterators_1.0.8    mgcv_1.8-12       
+## [19] Matrix_1.2-4       MASS_7.3-45        plyr_1.8.3        
+## [22] stats4_3.2.4       stringi_1.0-1      pbkrtest_0.4-6    
+## [25] magrittr_1.5       car_2.1-1          reshape2_1.4.1    
+## [28] rmarkdown_0.9.5    evaluate_0.8.3     gtable_0.2.0      
+## [31] colorspace_1.2-6   tools_3.2.4        parallel_3.2.4    
+## [34] nloptr_1.0.4       nlme_3.1-126       quantreg_5.21     
+## [37] class_7.3-14       formatR_1.3        Rcpp_0.12.3       
+## [40] SparseM_1.7</code></pre>
 </div>
 </div>
 
